@@ -7,18 +7,21 @@ import picamera
 class Camera(object):
     thread = None  # background thread that reads frames from camera
     frame = None  # current frame is stored here by background thread
+    last_access = 0  # time of last client access to the camera
 
-    def __init__(self):
-        if self.thread is None:
+    def initialize(self):
+        if Camera.thread is None:
             # start background frame thread
-            self.thread = threading.Thread(target=self._thread)
-            self.thread.start()
+            Camera.thread = threading.Thread(target=self._thread)
+            Camera.thread.start()
 
             # wait until frames start to be available
             while self.frame is None:
                 time.sleep(0)
 
     def get_frame(self):
+        Camera.last_access = time.time()
+        self.initialize()
         return self.frame
 
     @classmethod
@@ -43,3 +46,9 @@ class Camera(object):
                 # reset stream for next frame
                 stream.seek(0)
                 stream.truncate()
+
+                # if there hasn't been any clients asking for frames in
+                # the last 10 seconds stop the thread
+                if time.time() - cls.last_access > 10:
+                    break
+        cls.thread = None
