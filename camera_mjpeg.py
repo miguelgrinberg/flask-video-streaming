@@ -15,9 +15,6 @@ import urllib
 class Camera(object):
     def __init__(self):
 
-        # The data we will be reading
-        self.data = ''
-
         # Error flag
         self.error = None
 
@@ -43,37 +40,32 @@ class Camera(object):
             self.error = True
             return
 
-        # See if the data looks like an mjpeg stream
-        self.data += self.stream.read(1024)
-
-        if '\xff\xd8' not in self.data or 'Content-Type: image/jpeg' not in self.data:
-            self.error = True
-
     def get_frame(self):
         # If error flag was set, return error image
         if self.error is True:
             return self.error_image
 
-        # Read data until we get a single, full jpg image from the
-        # mjpeg stream that we can return
+        # Data we'll be reading
+        data = ''
+
+        # Read first part of header, and ignore it
+        self.stream.read(62)
+
+        # Read content length
+        content_length = ''
+
         while True:
-            self.data += self.stream.read(1024)
+            content_length += self.stream.read(1)
 
-            # Individual jpegs in an mjpeg stream start with '\xff\xd8'
-            # and end with '\xff\xd9'
+            if '\r' in content_length:
+                content_length = int(content_length[:-1])
+                break
 
-            start = self.data.find('\xff\xd8')
-            end = self.data.find('\xff\xd9')
+        # Skip the next 3 bytes
+        self.stream.read(3)
 
-            # Check if we've read enough data to put together a single
-            # jpg image
-            if start != -1 and end != -1: 
-                # Pull out just the data representing our image
-                jpg = self.data[start:end+2]
+        # Read content_length bytes (the jpeg data)
+        data = self.stream.read(content_length)
 
-                # Truncate the data to forget the image we just read
-                # from memory
-                self.data = self.data[end+2:]
-    
-                # Return the image
-                return jpg
+        # Return the image
+        return data
