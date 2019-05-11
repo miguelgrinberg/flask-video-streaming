@@ -7,7 +7,10 @@ class Camera(BaseCamera):
 
     @staticmethod
     def set_video_source(source):
-        Camera.video_source = source
+        try:
+            Camera.video_source = int(source)
+        except ValueError:
+            Camera.video_source = source
 
     @staticmethod
     def frames():

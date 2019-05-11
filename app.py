@@ -12,6 +12,9 @@ else:
 # Raspberry Pi camera module (requires picamera package)
 # from camera_pi import Camera
 
+if os.environ.get('CAMERA_SOURCE'):
+    Camera.set_video_source(os.environ['CAMERA_SOURCE'])
+
 app = Flask(__name__)
 
 
