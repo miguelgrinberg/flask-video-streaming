@@ -4,4 +4,4 @@ itsdangerous==0.24
 Jinja2==2.9.6
 MarkupSafe==1.0
 picamera==1.13
-Werkzeug==0.12.2
+Werkzeug==0.15.3
