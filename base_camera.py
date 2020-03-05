@@ -31,7 +31,6 @@ class CameraEvent(object):
         now = time.time()
         events_items = self.events.items()
         for ident, event in events_items:
-            remove = None
             if not event[0].isSet():
                 # if this client's event is not set, then set it
                 # also update the last set timestamp to now
@@ -43,9 +42,7 @@ class CameraEvent(object):
                 # if the event stays set for more than 5 seconds, then assume
                 # the client is gone and remove it
                 if now - event[1] > 5:
-                    remove = ident
-            if remove:
-                del self.events[remove]
+                    del self.events[ident]
 
     def clear(self):
         """Invoked from each client's thread after a frame was processed."""
