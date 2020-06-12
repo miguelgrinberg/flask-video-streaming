@@ -1,13 +1,27 @@
 #!/usr/bin/env python
-from importlib import import_module
 import os
 from flask import Flask, render_template, Response
 
+from labthings.server.quick import create_app
+from labthings.server.find import find_component
+from labthings.server.view import PropertyView
+
 # import camera driver
 from camera_pi import Camera
+from views import MjpegStream, SnapshotStream
 
-app = Flask(__name__)
-main_camera = Camera()
+app, labthing = create_app(
+    __name__,
+    title=f"Pi Camera",
+    description="Thing for Pi Camers",
+    types=["org.raspberrypi.camera"],
+    version="0.1.0"
+)
+
+labthing.add_component(Camera(), "org.raspberrypi.camera")
+
+labthing.add_view(MjpegStream, "/mjpeg")
+labthing.add_view(SnapshotStream, "/still")
 
 @app.route('/')
 def index():
@@ -15,26 +29,6 @@ def index():
     return render_template('index.html')
 
 
-def gen(camera):
-    """Video streaming generator function."""
-    while True:
-        frame = camera.get_frame()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-
-@app.route('/mjpeg')
-def mjpeg():
-    """Video streaming route. Put this in the src attribute of an img tag."""
-    return Response(gen(main_camera),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
-@app.route('/still')
-def still():
-    """Video streaming route. Put this in the src attribute of an img tag."""
-    return Response(main_camera.get_frame(), mimetype="image/jpeg")
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', threaded=True)
+if __name__ == "__main__":
+    from labthings.server.wsgi import Server
+    Server(app).run(host="::", port=5000, debug=False, zeroconf=True)
