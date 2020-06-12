@@ -9,10 +9,12 @@ class BaseCamera(object):
         self.thread = None  # background thread that reads frames from camera
         self.frame = None  # current frame is stored here by background thread
 
-        self.timeout = 5
         self.last_access = 0  # time of last client access to the camera
         self.event = ClientEvent()
 
+        self.start_worker()
+
+    def start_worker(self, timeout: int = 5):
         if self.thread is None:
             self.last_access = time.time()
 
@@ -20,7 +22,7 @@ class BaseCamera(object):
             self.thread = gevent.spawn(self._thread)
 
             # wait until frames are available
-            timeout_time = time.time() + self.timeout
+            timeout_time = time.time() + timeout
             while self.get_frame() is None:
                 if time.time() > timeout_time:
                     raise TimeoutError("Timeout waiting for frames.")

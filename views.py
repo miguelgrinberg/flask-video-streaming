@@ -4,8 +4,8 @@ from labthings.server.find import find_component
 from labthings.server.view import PropertyView
 from labthings.server.decorators import doc_response
 
-
-from flask import Response
+import io
+from flask import Response, send_file
 
 class MjpegStream(PropertyView):
     """
@@ -18,6 +18,8 @@ class MjpegStream(PropertyView):
         MJPEG stream from the Pi camera.
         """
         camera = find_component("org.raspberrypi.camera")
+        # Ensure camera worker is running
+        camera.start_worker()
 
         return Response(
             gen(camera), mimetype="multipart/x-mixed-replace; boundary=frame"
@@ -35,5 +37,7 @@ class SnapshotStream(PropertyView):
         Single snapshot from the camera stream
         """
         camera = find_component("org.raspberrypi.camera")
+        # Ensure camera worker is running
+        camera.start_worker()
 
         return Response(camera.get_frame(), mimetype="image/jpeg")

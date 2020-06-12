@@ -1,8 +1,5 @@
 #!/usr/bin/env python
-from labthings.server import monkey
-
-monkey.patch_all()
-
+import logging
 import os
 from flask import Flask, render_template, Response
 
@@ -14,9 +11,14 @@ from labthings.server.view import PropertyView
 from camera_pi import Camera
 from views import MjpegStream, SnapshotStream
 
+# Set root logger level
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+print("Creating Lab Thing...")
 app, labthing = create_app(
     __name__,
-    title=f"Pi Camera",
+    title="Pi Camera",
     description="Thing for Pi Camers",
     types=["org.raspberrypi.camera"],
     version="0.1.0"
@@ -28,5 +30,6 @@ labthing.add_view(MjpegStream, "/mjpeg")
 labthing.add_view(SnapshotStream, "/still")
 
 if __name__ == "__main__":
+    print("Starting server...")
     from labthings.server.wsgi import Server
     Server(app).run(host="::", port=5000, debug=False, zeroconf=True)

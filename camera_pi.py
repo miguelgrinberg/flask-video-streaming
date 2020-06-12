@@ -17,6 +17,8 @@ class Camera(BaseCamera):
 
         BaseCamera.__init__(self)
 
+    def capture(self, *args, **kwargs):
+        return self.camera.capture(*args, **kwargs)
 
     def frames(self):
         self.camera.start_recording(
