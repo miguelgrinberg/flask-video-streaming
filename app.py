@@ -23,12 +23,6 @@ labthing.add_component(Camera(), "org.raspberrypi.camera")
 labthing.add_view(MjpegStream, "/mjpeg")
 labthing.add_view(SnapshotStream, "/still")
 
-@app.route('/')
-def index():
-    """Video streaming home page."""
-    return render_template('index.html')
-
-
 if __name__ == "__main__":
     from labthings.server.wsgi import Server
     Server(app).run(host="::", port=5000, debug=False, zeroconf=True)
