@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-#!/usr/bin/env python
-from labthings import monkey
+from labthings.server import monkey
 
 monkey.patch_all()
 
