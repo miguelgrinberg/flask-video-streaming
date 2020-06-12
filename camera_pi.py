@@ -14,11 +14,8 @@ class Camera(BaseCamera):
         self.camera = picamera.PiCamera()
         self.stream = io.BytesIO()
 
-    def start_stream_recording(self):
-
 
     def frames(self):
-
         self.camera.start_recording(
             self.stream,
             format="mjpeg",
