@@ -8,6 +8,8 @@ class BaseCamera(object):
         """Start the background camera thread if it isn't running yet."""
         self.thread = None  # background thread that reads frames from camera
         self.frame = None  # current frame is stored here by background thread
+
+        self.timeout = 5
         self.last_access = 0  # time of last client access to the camera
         self.event = ClientEvent()
 
@@ -18,8 +20,12 @@ class BaseCamera(object):
             self.thread = gevent.spawn(self._thread)
 
             # wait until frames are available
+            timeout_time = time.time() + timeout
             while self.get_frame() is None:
-                time.sleep(0)
+                if time.time() > timeout_time:
+                    raise TimeoutError("Timeout waiting for frames.")
+                else:
+                    gevent.sleep()
 
     def get_frame(self):
         """Return the current camera frame."""
@@ -38,11 +44,12 @@ class BaseCamera(object):
     def _thread(self):
         """Camera background thread."""
         print('Starting camera thread.')
+
         frames_iterator = self.frames()
         for frame in frames_iterator:
             self.frame = frame
             self.event.set()  # send signal to clients
-            time.sleep(0)
+            gevent.sleep()
 
             # if there hasn't been any clients asking for frames in
             # the last 10 seconds then stop the thread
@@ -50,4 +57,5 @@ class BaseCamera(object):
                 frames_iterator.close()
                 print('Stopping camera thread due to inactivity.')
                 break
+
         self.thread = None

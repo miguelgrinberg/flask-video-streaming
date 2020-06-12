@@ -1,5 +1,6 @@
 import io
 import time
+import gevent
 import picamera
 from base_camera import BaseCamera
 
@@ -28,6 +29,8 @@ class Camera(BaseCamera):
             while True:
                 self.stream.seek(0)
                 self.stream.truncate()
+                # to stream, read the new frame
+                gevent.sleep(1 / self.camera.framerate * 0.1)
                 # yield the result to be read
                 frame = self.stream.getvalue()
 
