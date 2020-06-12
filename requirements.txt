@@ -4,3 +4,6 @@ itsdangerous==0.24
 Jinja2==2.11.2
 MarkupSafe==1.1.1
 Werkzeug==1.0.1
+picamera==1.13
+labthings==0.6.4
+gevent
