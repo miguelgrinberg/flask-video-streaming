@@ -9,18 +9,35 @@ STREAM_RESOLUTION = (
 ) 
 
 class Camera(BaseCamera):
-    @staticmethod
-    def frames():
-        with picamera.PiCamera() as camera:
-            # let camera warm up
-            time.sleep(2)
 
-            stream = io.BytesIO()
-            for _ in camera.capture_continuous(stream, 'jpeg', resize=STREAM_RESOLUTION, use_video_port=True):
-                # return current frame
-                stream.seek(0)
-                yield stream.read()
+    def __init__(self):
+        self.camera = picamera.PiCamera()
+        self.stream = io.BytesIO()
 
-                # reset stream for next frame
-                stream.seek(0)
-                stream.truncate()
+    def start_stream_recording(self):
+
+
+    def frames(self):
+
+        self.camera.start_recording(
+            self.stream,
+            format="mjpeg",
+            quality=70
+        )
+
+        try:
+            while True:
+                self.stream.seek(0)
+                self.stream.truncate()
+                # yield the result to be read
+                frame = self.stream.getvalue()
+
+                # ensure the size of package is right
+                if len(frame) == 0:
+                    pass
+                else:
+                    yield frame
+
+        finally:
+            self.camera.stop_recording()
+
