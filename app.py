@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+#!/usr/bin/env python
+from labthings import monkey
+
+monkey.patch_all()
+
 import os
 from flask import Flask, render_template, Response
 
