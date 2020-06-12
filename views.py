@@ -2,6 +2,8 @@ from utilities import gen
 
 from labthings.server.find import find_component
 from labthings.server.view import PropertyView
+from labthings.server.decorators import doc_response
+
 
 from flask import Response
 
