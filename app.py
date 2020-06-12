@@ -7,7 +7,7 @@ from flask import Flask, render_template, Response
 from camera_pi import Camera
 
 app = Flask(__name__)
-
+main_camera = Camera()
 
 @app.route('/')
 def index():
@@ -26,7 +26,7 @@ def gen(camera):
 @app.route('/video_feed')
 def video_feed():
     """Video streaming route. Put this in the src attribute of an img tag."""
-    return Response(gen(Camera()),
+    return Response(gen(main_camera),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
