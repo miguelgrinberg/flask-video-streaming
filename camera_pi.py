@@ -14,6 +14,8 @@ class Camera(BaseCamera):
         self.camera = picamera.PiCamera()
         self.stream = io.BytesIO()
 
+        BaseCamera.__init__(self)
+
 
     def frames(self):
         self.camera.start_recording(

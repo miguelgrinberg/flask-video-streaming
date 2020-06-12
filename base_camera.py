@@ -58,6 +58,7 @@ class BaseCamera(object):
         self.frame = None  # current frame is stored here by background thread
         self.last_access = 0  # time of last client access to the camera
         self.event = CameraEvent()
+
         if self.thread is None:
             self.last_access = time.time()
 
