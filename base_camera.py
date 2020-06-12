@@ -20,7 +20,7 @@ class BaseCamera(object):
             self.thread = gevent.spawn(self._thread)
 
             # wait until frames are available
-            timeout_time = time.time() + timeout
+            timeout_time = time.time() + self.timeout
             while self.get_frame() is None:
                 if time.time() > timeout_time:
                     raise TimeoutError("Timeout waiting for frames.")
