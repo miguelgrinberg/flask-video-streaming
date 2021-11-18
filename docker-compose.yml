@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  app:
+    init: true
+    build: .
+    environment:
+      - PORT
+    ports:
+      - "${PORT}:${PORT}"
