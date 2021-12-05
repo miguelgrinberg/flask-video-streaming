@@ -2,7 +2,7 @@ click==8.0.3
 Flask==2.0.2
 importlib-metadata==4.8.2
 itsdangerous==2.0.1
-Jinja2==3.0.3
+Jinja2==2.11.3
 MarkupSafe==2.0.1
 pkg-resources==0.0.0
 typing-extensions==4.0.1
