@@ -1,0 +1,7 @@
+click==6.7
+Flask==1.1.2
+itsdangerous==0.24
+Jinja2==2.11.2
+MarkupSafe==1.1.1
+Werkzeug==1.0.1
+picamera2 @ git+https://github.com/raspberrypi/picamera2.git@0076c7b0b18a5ff836c40c833a3edb8fa1e9d599
