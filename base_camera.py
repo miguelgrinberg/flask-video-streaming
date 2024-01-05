@@ -1,3 +1,4 @@
+import copy
 import time
 import threading
 try:
@@ -29,7 +30,7 @@ class CameraEvent(object):
     def set(self):
         """Invoked by the camera thread when a new frame is available."""
         now = time.time()
-        remove = None
+        remove = []
         for ident, event in self.events.items():
             if not event[0].isSet():
                 # if this client's event is not set, then set it
@@ -42,9 +43,10 @@ class CameraEvent(object):
                 # if the event stays set for more than 5 seconds, then assume
                 # the client is gone and remove it
                 if now - event[1] > 5:
-                    remove = ident
-        if remove:
-            del self.events[remove]
+                    remove.append(ident)
+
+        for ident in remove:
+            del self.events[ident]
 
     def clear(self):
         """Invoked from each client's thread after a frame was processed."""
